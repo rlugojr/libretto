@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>Libretto by apcera</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+  </head>
+  <body>
+    <section class="page-header">
+      <h1 class="project-name">Libretto</h1>
+      <h2 class="project-tagline">Libretto is a Golang library to create Virtual Machines (VM) on any cloud and Virtual Machine hosting platforms such as AWS, Azure, OpenStack, vSphere, or VirtualBox.</h2>
+      <a href="https://github.com/apcera/libretto" class="btn">View on GitHub</a>
+      <a href="https://github.com/apcera/libretto/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/apcera/libretto/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
+
+    <section class="main-content">
+      <h1>
+<a id="-libretto" class="anchor" href="#-libretto" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a> Libretto</h1>
+
+<p>Libretto is a Golang library to create Virtual Machines (VM) on any cloud and
+Virtual Machine hosting platforms such as AWS, Azure, OpenStack, vSphere,
+or VirtualBox. Different providers have different utilities and API interfaces
+to achieve that, but the abstractions of their interfaces are quite similar.</p>
+
+<h1>
+<a id="contributors" class="anchor" href="#contributors" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Contributors</h1>
+
+<ul>
+<li>David Liu</li>
+<li>Jaime Piña</li>
+<li>Josh Ellithorpe</li>
+<li>Kerim Oktay</li>
+<li>Lirui Li</li>
+<li>Preet Bhinder</li>
+<li>Ryan Boehning</li>
+</ul>
+
+<h1>
+<a id="examples" class="anchor" href="#examples" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Examples</h1>
+
+<h2>
+<a id="aws" class="anchor" href="#aws" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>AWS</h2>
+
+<div class="highlight highlight-source-go"><pre>
+<span class="pl-smi">rawKey</span>, <span class="pl-smi">err</span> <span class="pl-k">:=</span> ioutil.<span class="pl-c1">ReadFile</span>(*key)
+<span class="pl-k">if</span> err != <span class="pl-c1">nil</span> {
+        <span class="pl-k">return</span> err
+}
+
+<span class="pl-smi">vm</span> <span class="pl-k">:=</span> &amp;aws.<span class="pl-smi">VM</span>{
+        <span class="pl-v">Name</span>:         <span class="pl-s"><span class="pl-pds">"</span>libretto-aws<span class="pl-pds">"</span></span>,
+        <span class="pl-v">AMI</span>:          <span class="pl-s"><span class="pl-pds">"</span>ami-984734<span class="pl-pds">"</span></span>,
+        <span class="pl-v">InstanceType</span>: <span class="pl-s"><span class="pl-pds">"</span>m4.large<span class="pl-pds">"</span></span>,
+        <span class="pl-v">SSHCreds</span>: ssh.<span class="pl-smi">Credentials</span>{
+                SSHUser:       <span class="pl-s"><span class="pl-pds">"</span>ubuntu<span class="pl-pds">"</span></span>,
+                SSHPrivateKey: <span class="pl-c1">string</span>(rawKey),
+        },
+        <span class="pl-v">DeviceName</span>:    <span class="pl-s"><span class="pl-pds">"</span>/dev/sda1<span class="pl-pds">"</span></span>,
+        <span class="pl-v">Region</span>:        <span class="pl-s"><span class="pl-pds">"</span>ap-northeast-1<span class="pl-pds">"</span></span>,
+        <span class="pl-v">KeyPair</span>:       strings.<span class="pl-c1">TrimSuffix</span>(filepath.<span class="pl-c1">Base</span>(*key), filepath.<span class="pl-c1">Ext</span>(*key)),
+        <span class="pl-v">SecurityGroup</span>: <span class="pl-s"><span class="pl-pds">"</span>sg-9fdsfds<span class="pl-pds">"</span></span>,
+}
+
+<span class="pl-k">if</span> <span class="pl-smi">err</span> <span class="pl-k">:=</span> aws.<span class="pl-c1">ValidCredentials</span>(vm.<span class="pl-smi">Region</span>); err != <span class="pl-c1">nil</span> {
+        <span class="pl-k">return</span> err
+}
+
+<span class="pl-k">if</span> <span class="pl-smi">err</span> <span class="pl-k">:=</span> vm.<span class="pl-c1">Provision</span>(); err != <span class="pl-c1">nil</span> {
+        <span class="pl-k">return</span> err
+}
+</pre></div>
+
+<h2>
+<a id="vsphere" class="anchor" href="#vsphere" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>vSphere</h2>
+
+<div class="highlight highlight-source-go"><pre>
+<span class="pl-smi">vm</span> <span class="pl-k">:=</span> &amp;vsphere.<span class="pl-smi">VM</span>{
+        <span class="pl-v">Host</span>:       <span class="pl-s"><span class="pl-pds">"</span>10.2.1.11<span class="pl-pds">"</span></span>,
+        <span class="pl-v">Username</span>:   <span class="pl-s"><span class="pl-pds">"</span>username<span class="pl-pds">"</span></span>,
+        <span class="pl-v">Password</span>:   <span class="pl-s"><span class="pl-pds">"</span>password<span class="pl-pds">"</span></span>,
+        <span class="pl-v">Datacenter</span>: <span class="pl-s"><span class="pl-pds">"</span>test-dc<span class="pl-pds">"</span></span>,
+        <span class="pl-v">Datastores</span>: <span class="pl-s"><span class="pl-pds">"</span>datastore1, datastore2<span class="pl-pds">"</span></span>,
+        <span class="pl-v">Networks</span>:   <span class="pl-s"><span class="pl-pds">"</span>network1<span class="pl-pds">"</span></span>,
+        <span class="pl-v">Credentials</span>: ssh.<span class="pl-smi">Credentials</span>{
+            SSHUser:     <span class="pl-s"><span class="pl-pds">"</span>ubuntu<span class="pl-pds">"</span></span>,
+            SSHPassword: <span class="pl-s"><span class="pl-pds">"</span>ubuntu<span class="pl-pds">"</span></span>,
+        },
+        <span class="pl-v">SkipExisting</span>: <span class="pl-c1">true</span>,
+        <span class="pl-v">DestinationName</span>: <span class="pl-s"><span class="pl-pds">"</span>Host1<span class="pl-pds">"</span></span>,
+        <span class="pl-v">DestinationType</span>: <span class="pl-s"><span class="pl-pds">"</span>host<span class="pl-pds">"</span></span>,
+        <span class="pl-v">Name</span>: <span class="pl-s"><span class="pl-pds">"</span>test-vm<span class="pl-pds">"</span></span>,
+        <span class="pl-v">Template</span>: <span class="pl-s"><span class="pl-pds">"</span>test-template<span class="pl-pds">"</span></span>,
+        <span class="pl-v">OvfPath</span>: <span class="pl-s"><span class="pl-pds">"</span>/Users/Test/Downloads/file.ovf<span class="pl-pds">"</span></span>,
+}
+<span class="pl-k">if</span> <span class="pl-smi">err</span> <span class="pl-k">:=</span> vm.<span class="pl-c1">Provision</span>(); err != <span class="pl-c1">nil</span> {
+        <span class="pl-k">return</span> err
+}</pre></div>
+
+<h2>
+<a id="digital-ocean" class="anchor" href="#digital-ocean" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Digital Ocean</h2>
+
+<div class="highlight highlight-source-go"><pre><span class="pl-smi">token</span> <span class="pl-k">:=</span> os.<span class="pl-c1">Getenv</span>(<span class="pl-s"><span class="pl-pds">"</span>DIGITALOCEAN_API_KEY<span class="pl-pds">"</span></span>)
+<span class="pl-k">if</span> token == <span class="pl-s"><span class="pl-pds">"</span><span class="pl-pds">"</span></span> {
+    <span class="pl-k">return</span> fmt.<span class="pl-c1">Errorf</span>(<span class="pl-s"><span class="pl-pds">"</span>Please export your DigitalOcean API key to 'DIGITALOCEAN_API_KEY' and run again.<span class="pl-pds">"</span></span>)
+}
+<span class="pl-smi">config</span> <span class="pl-k">:=</span> digitalocean.<span class="pl-smi">Config</span>{
+    <span class="pl-v">Name</span>:   defaultDropletName,
+    <span class="pl-v">Region</span>: defaultDropletRegion,
+    <span class="pl-v">Image</span>:  defaultDropletImage,
+    <span class="pl-v">Size</span>:   defaultDropletSize,
+}
+
+<span class="pl-smi">vm</span> <span class="pl-k">:=</span> digitalocean.<span class="pl-smi">VM</span>{
+    <span class="pl-v">ApiToken</span>: token,
+    <span class="pl-v">Config</span>:   config,
+}
+
+<span class="pl-k">if</span> <span class="pl-smi">err</span> <span class="pl-k">:=</span> vm.<span class="pl-c1">Provision</span>(); err != <span class="pl-c1">nil</span> {
+    <span class="pl-k">return</span> err
+}</pre></div>
+
+<h2>
+<a id="virtualbox" class="anchor" href="#virtualbox" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Virtualbox</h2>
+
+<div class="highlight highlight-source-go"><pre>
+<span class="pl-k">var</span> <span class="pl-smi">config</span> virtualbox.<span class="pl-smi">Config</span>
+config.<span class="pl-smi">NICs</span> = []virtualbox.<span class="pl-smi">NIC</span>{
+    virtualbox.<span class="pl-smi">NIC</span>{Idx: <span class="pl-c1">1</span>, Backing: virtualbox.<span class="pl-smi">Bridged</span>, BackingDevice: <span class="pl-s"><span class="pl-pds">"</span>en0: Wi-Fi (AirPort)<span class="pl-pds">"</span></span>},
+}
+<span class="pl-smi">vm</span> <span class="pl-k">:=</span> virtualbox.<span class="pl-smi">VM</span>{Src: <span class="pl-s"><span class="pl-pds">"</span>/Users/Admin/vm-bfb21a62-60c5-11e5-9fc5-a45e60e45ad5.ova<span class="pl-pds">"</span></span>,
+    <span class="pl-v">Credentials</span>: ssh.<span class="pl-smi">Credentials</span>{
+        SSHUser:     <span class="pl-s"><span class="pl-pds">"</span>ubuntu<span class="pl-pds">"</span></span>,
+        SSHPassword: <span class="pl-s"><span class="pl-pds">"</span>ubuntu<span class="pl-pds">"</span></span>,
+    },
+    <span class="pl-v">Config</span>: config,
+}
+<span class="pl-k">if</span> <span class="pl-smi">err</span> <span class="pl-k">:=</span> vm.<span class="pl-c1">Provision</span>(); err != <span class="pl-c1">nil</span> {
+    <span class="pl-k">return</span> err
+}</pre></div>
+
+<h2>
+<a id="vmware-fusionworkstation-vmrun" class="anchor" href="#vmware-fusionworkstation-vmrun" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>VMware Fusion/Workstation (vmrun)</h2>
+
+<div class="highlight highlight-source-go"><pre><span class="pl-k">var</span> <span class="pl-smi">config</span> vmrun.<span class="pl-smi">Config</span>
+config.<span class="pl-smi">NICs</span> = []vmrun.<span class="pl-smi">NIC</span>{
+    vmrun.<span class="pl-smi">NIC</span>{Idx: <span class="pl-c1">0</span>, Backing: vmrun.<span class="pl-smi">Nat</span>, BackingDevice: <span class="pl-s"><span class="pl-pds">"</span>en0<span class="pl-pds">"</span></span>},
+}
+<span class="pl-smi">vm</span> <span class="pl-k">:=</span> vmrun.<span class="pl-smi">VM</span>{Src: <span class="pl-s"><span class="pl-pds">"</span>/Users/Admin/vmware_desktop/trusty-orchestrator-dev.vmx<span class="pl-pds">"</span></span>,
+    <span class="pl-v">Dst</span>: <span class="pl-s"><span class="pl-pds">"</span>/Users/Admin/Documents/VMs<span class="pl-pds">"</span></span>,
+    <span class="pl-v">Credentials</span>: ssh.<span class="pl-smi">Credentials</span>{
+        SSHUser:     <span class="pl-s"><span class="pl-pds">"</span>ubuntu<span class="pl-pds">"</span></span>,
+        SSHPassword: <span class="pl-s"><span class="pl-pds">"</span>ubuntu<span class="pl-pds">"</span></span>,
+    },
+    <span class="pl-v">Config</span>: config,
+}
+<span class="pl-k">if</span> <span class="pl-smi">err</span> <span class="pl-k">:=</span> vm.<span class="pl-c1">Provision</span>(); err != <span class="pl-c1">nil</span> {
+    <span class="pl-k">return</span> err
+}</pre></div>
+
+<h2>
+<a id="openstack" class="anchor" href="#openstack" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Openstack</h2>
+
+<div class="highlight highlight-source-go"><pre>
+    <span class="pl-smi">metadata</span> <span class="pl-k">:=</span> openstack.<span class="pl-c1">NewDefaultImageMetadata</span>()
+    <span class="pl-smi">volume</span> <span class="pl-k">:=</span> openstack.<span class="pl-c1">NewDefaultVolume</span>()
+
+    <span class="pl-smi">vm</span> <span class="pl-k">:=</span> &amp;openstack.<span class="pl-smi">VM</span>{
+        <span class="pl-v">IdentityEndpoint</span>: os.<span class="pl-c1">Getenv</span>(<span class="pl-s"><span class="pl-pds">"</span>OS_AUTH_URL<span class="pl-pds">"</span></span>),
+        <span class="pl-v">Username</span>:         os.<span class="pl-c1">Getenv</span>(<span class="pl-s"><span class="pl-pds">"</span>OS_USERNAME<span class="pl-pds">"</span></span>),
+        <span class="pl-v">Password</span>:         os.<span class="pl-c1">Getenv</span>(<span class="pl-s"><span class="pl-pds">"</span>OS_PASSWORD<span class="pl-pds">"</span></span>),
+        <span class="pl-v">Region</span>:           os.<span class="pl-c1">Getenv</span>(<span class="pl-s"><span class="pl-pds">"</span>OS_REGION_NAME<span class="pl-pds">"</span></span>),
+        <span class="pl-v">TenantName</span>:       os.<span class="pl-c1">Getenv</span>(<span class="pl-s"><span class="pl-pds">"</span>OS_TENANT_NAME<span class="pl-pds">"</span></span>),
+        <span class="pl-v">FlavorName</span>:       <span class="pl-s"><span class="pl-pds">"</span>m1.medium<span class="pl-pds">"</span></span>,
+        <span class="pl-v">ImageID</span>:          <span class="pl-s"><span class="pl-pds">"</span><span class="pl-pds">"</span></span>,
+        <span class="pl-v">ImageMetadata</span>:    metadata,
+        <span class="pl-v">ImagePath</span>:        os.<span class="pl-c1">Getenv</span>(<span class="pl-s"><span class="pl-pds">"</span>OS_IMAGE_PATH<span class="pl-pds">"</span></span>),
+        <span class="pl-v">Volume</span>:           volume,
+        <span class="pl-v">InstanceID</span>:       <span class="pl-s"><span class="pl-pds">"</span><span class="pl-pds">"</span></span>,
+        <span class="pl-v">Name</span>:             <span class="pl-s"><span class="pl-pds">"</span>test<span class="pl-pds">"</span></span>,
+        <span class="pl-v">Networks</span>:         []<span class="pl-k">string</span>{<span class="pl-s"><span class="pl-pds">"</span>eab29109-3363-4b03-8a56-8fe27b71f3a0<span class="pl-pds">"</span></span>},
+        <span class="pl-v">FloatingIPPool</span>:   <span class="pl-s"><span class="pl-pds">"</span>net04_ext<span class="pl-pds">"</span></span>,
+        <span class="pl-v">FloatingIP</span>:       <span class="pl-c1">nil</span>,
+        <span class="pl-v">SecurityGroup</span>:    <span class="pl-s"><span class="pl-pds">"</span>test<span class="pl-pds">"</span></span>,
+        <span class="pl-v">Credentials</span>: ssh.<span class="pl-smi">Credentials</span>{
+            SSHUser:     <span class="pl-s"><span class="pl-pds">"</span>ubuntu<span class="pl-pds">"</span></span>,
+            SSHPassword: <span class="pl-s"><span class="pl-pds">"</span>ubuntu<span class="pl-pds">"</span></span>,
+        },
+    }
+
+    <span class="pl-smi">err</span> <span class="pl-k">:=</span> vm.<span class="pl-c1">Provision</span>()
+    <span class="pl-k">if</span> err != <span class="pl-c1">nil</span> {
+        <span class="pl-k">return</span> err
+    }</pre></div>
+
+<h1>
+<a id="faq" class="anchor" href="#faq" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>FAQ</h1>
+
+<ul>
+<li>Why write Libretto?</li>
+</ul>
+
+<p>We couldn't find a suitable Golang binding for this functionality, so we
+created this library. There are a couple of similar libraries but not in golang
+(fog.io in ruby, jcloud in java, libcloud in python).</p>
+
+<p>Docker Machine is an effort toward that direction, but it is very Docker
+specific, and its providers dictate the VM images in many cases to reduce the
+number of parameters, but reduces the flexibility of the tool.</p>
+
+<ul>
+<li>What is the scope for Libretto?</li>
+</ul>
+
+<p>Virtual machine creation and life cycle
+management as well as common configuration steps during a deploy such as
+configuring SSH keys.</p>
+
+<ul>
+<li>Why use this library over other tools?</li>
+</ul>
+
+<p>Actively used and developed. Can be called natively from Go in a Go application
+instead of shelling out to other tools.</p>
+
+<h1>
+<a id="getting-started" class="anchor" href="#getting-started" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Getting Started</h1>
+
+<p><code>go get github.com/apcera/libretto/...</code></p>
+
+<p><code>go build ./...</code></p>
+
+<h1>
+<a id="known-issues" class="anchor" href="#known-issues" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Known Issues</h1>
+
+<ul>
+<li>
+<p>Virtualbox networking is limited to using Bridged mode.</p>
+
+<p>Host to guest OS connectivity is not possible when using NAT networking in
+Virtualbox. As a result, presently networking configuration for VMs
+provisioned using the Virtualbox provider is limited to using Bridged
+networking. There should be a DHCP server running on the network that the VMs
+are bridged to.</p>
+</li>
+</ul>
+
+<h1>
+<a id="supported-platforms" class="anchor" href="#supported-platforms" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Supported Platforms</h1>
+
+<ul>
+<li>Linux x64</li>
+<li>Windows 7 &gt;= x64</li>
+<li>OS X &gt;= 10.11</li>
+</ul>
+
+<p>Other Operating Systems might work but have not been tested.</p>
+
+<h1>
+<a id="supported-providers" class="anchor" href="#supported-providers" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Supported Providers</h1>
+
+<ul>
+<li>vSphere &gt; 5.0</li>
+<li>AWS</li>
+<li>Openstack (Mirantis)</li>
+<li>VMware Fusion &gt;= 8.0</li>
+<li>VMware Workstation &gt;= 8.0</li>
+<li>Virtualbox &gt;= 4.3.30</li>
+<li>Azure</li>
+<li>DigitalOcean</li>
+</ul>
+
+<h1>
+<a id="writing-a-new-provisioner" class="anchor" href="#writing-a-new-provisioner" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Writing a new provisioner</h1>
+
+<p>Create a new package inside the <code>virtualmachine</code> folder and implement the
+Libretto <code>VirtualMachine</code> interface. The provider should work at the minimum on
+the Linux, Windows and OS X platforms unless it is a platform specific provider
+in which case it should at least compile and return a descriptive error.</p>
+
+<p>Dependencies should be versioned and stored using <code>Godeps</code>
+(<a href="https://github.com/tools/godep">https://github.com/tools/godep</a>)</p>
+
+<p>Errors should be lower case so that they can be wrapped by the calling code. If
+possible, types defined in the top level <code>virtualmachine</code> package should be
+reused.</p>
+
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/apcera/libretto">Libretto</a> is maintained by <a href="https://github.com/apcera">apcera</a>.</span>
+
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+      </footer>
+
+    </section>
+
+  
+  </body>
+</html>

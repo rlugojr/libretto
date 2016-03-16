@@ -3,6 +3,8 @@
 package ssh
 
 import (
+	"errors"
+	"net"
 	"testing"
 
 	cssh "github.com/apcera/libretto/Godeps/_workspace/src/golang.org/x/crypto/ssh"
@@ -64,5 +66,26 @@ func TestConnectAuthPrecedence(t *testing.T) {
 	if count != 1 {
 		t.Logf("Should have called the password key method %d times", count)
 		t.Fail()
+	}
+}
+
+// TestIsTooManyColonsErr tests that IsTooManyColonsErr() only returns true when
+// "too many colons in address" OpError is returned from net.SplitHostPort().
+// This error is important because we're catching it and rewriting it to also
+// include a message that the error may have been cause by IPv4 address
+// exhaustion.
+func TestIsTooManyColonsErr(t *testing.T) {
+	cases := []struct {
+		input error
+		want  bool
+	}{
+		{&net.OpError{Op: "dial", Err: errors.New("too many colons in address")}, true},
+		{&net.OpError{Op: "wrong op", Err: errors.New("should return false")}, false},
+	}
+
+	for _, testCase := range cases {
+		if got := IsTooManyColonsErr(testCase.input); got != testCase.want {
+			t.Fatalf("IsTooManyColons(%v)\n\tgot:  %v\n\twant: %v", testCase.input, got, testCase.want)
+		}
 	}
 }

@@ -110,6 +110,14 @@ var dial = func(network, addr string, config *cssh.ClientConfig) (*cssh.Client, 
 
 	conn, err := d.Dial(network, addr)
 	if err != nil {
+		if isTooManyColonsErr(err) {
+			// If Dial fails due to IPv4 address exhaustion, it will be returned
+			// as a "too many colons in address" error, which is not helpful.
+			// Append a hint about the real error.
+			err := err.(*net.OpError)
+			err.Err = fmt.Errorf("%v, or no more IPv4 addresses", err.Err)
+			return nil, err
+		}
 		return nil, err
 	}
 
@@ -119,6 +127,18 @@ var dial = func(network, addr string, config *cssh.ClientConfig) (*cssh.Client, 
 	}
 
 	return cssh.NewClient(c, chans, reqs), nil
+}
+
+// isTooManyColonsErr returns true if the given error is a specific
+// "too many colons in address" *net.OpError. We need to detect this error so we
+// can rewrite a more helpful error message.
+func isTooManyColonsErr(err error) bool {
+	if err, ok := err.(*net.OpError); ok && err.Op == "dial" {
+		if strings.Contains(err.Err.Error(), "too many colons") {
+			return true
+		}
+	}
+	return false
 }
 
 var readPrivateKey = func(key string) (cssh.AuthMethod, error) {

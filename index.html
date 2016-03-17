@@ -19,8 +19,10 @@
     </section>
 
     <section class="main-content">
-      <h1>
-<a id="-libretto" class="anchor" href="#-libretto" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a> Libretto</h1>
+      <p><a href="https://opensource.org/licenses/Apache-2.0"><img src="https://img.shields.io/:license-apache-blue.svg" alt="License"></a> <a href="https://goreportcard.com/report/github.com/apcera/libretto"><img src="http://goreportcard.com/badge/apcera/libretto" alt="ReportCard"></a> <a href="http://travis-ci.org/apcera/libretto"><img src="https://travis-ci.org/apcera/libretto.svg?branch=master" alt="Build"></a> <a href="https://godoc.org/github.com/apcera/libretto"><img src="https://godoc.org/github.com/apcera/libretto?status.svg" alt="GoDoc"></a></p>
+
+<h1>
+<a id="libretto" class="anchor" href="#libretto" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Libretto</h1>
 
 <p>Libretto is a Golang library to create Virtual Machines (VM) on any cloud and
 Virtual Machine hosting platforms such as AWS, Azure, OpenStack, vSphere,
@@ -28,17 +30,25 @@ or VirtualBox. Different providers have different utilities and API interfaces
 to achieve that, but the abstractions of their interfaces are quite similar.</p>
 
 <h1>
-<a id="contributors" class="anchor" href="#contributors" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Contributors</h1>
+<a id="supported-providers" class="anchor" href="#supported-providers" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Supported Providers</h1>
 
 <ul>
-<li>David Liu</li>
-<li>Jaime Piña</li>
-<li>Josh Ellithorpe</li>
-<li>Kerim Oktay</li>
-<li>Lirui Li</li>
-<li>Preet Bhinder</li>
-<li>Ryan Boehning</li>
+<li>vSphere &gt; 5.0</li>
+<li>AWS</li>
+<li>Openstack (Mirantis)</li>
+<li>VMware Fusion &gt;= 8.0</li>
+<li>VMware Workstation &gt;= 8.0</li>
+<li>Virtualbox &gt;= 4.3.30</li>
+<li>Azure</li>
+<li>DigitalOcean</li>
 </ul>
+
+<h1>
+<a id="getting-started" class="anchor" href="#getting-started" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Getting Started</h1>
+
+<p><code>go get github.com/apcera/libretto/...</code></p>
+
+<p><code>go build ./...</code></p>
 
 <h1>
 <a id="examples" class="anchor" href="#examples" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Examples</h1>
@@ -228,13 +238,6 @@ configuring SSH keys.</p>
 instead of shelling out to other tools.</p>
 
 <h1>
-<a id="getting-started" class="anchor" href="#getting-started" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Getting Started</h1>
-
-<p><code>go get github.com/apcera/libretto/...</code></p>
-
-<p><code>go build ./...</code></p>
-
-<h1>
 <a id="known-issues" class="anchor" href="#known-issues" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Known Issues</h1>
 
 <ul>
@@ -261,21 +264,7 @@ are bridged to.</p>
 <p>Other Operating Systems might work but have not been tested.</p>
 
 <h1>
-<a id="supported-providers" class="anchor" href="#supported-providers" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Supported Providers</h1>
-
-<ul>
-<li>vSphere &gt; 5.0</li>
-<li>AWS</li>
-<li>Openstack (Mirantis)</li>
-<li>VMware Fusion &gt;= 8.0</li>
-<li>VMware Workstation &gt;= 8.0</li>
-<li>Virtualbox &gt;= 4.3.30</li>
-<li>Azure</li>
-<li>DigitalOcean</li>
-</ul>
-
-<h1>
-<a id="writing-a-new-provisioner" class="anchor" href="#writing-a-new-provisioner" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Writing a new provisioner</h1>
+<a id="adding-provisioners" class="anchor" href="#adding-provisioners" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Adding Provisioners</h1>
 
 <p>Create a new package inside the <code>virtualmachine</code> folder and implement the
 Libretto <code>VirtualMachine</code> interface. The provider should work at the minimum on
@@ -288,6 +277,19 @@ in which case it should at least compile and return a descriptive error.</p>
 <p>Errors should be lower case so that they can be wrapped by the calling code. If
 possible, types defined in the top level <code>virtualmachine</code> package should be
 reused.</p>
+
+<h1>
+<a id="contributors" class="anchor" href="#contributors" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Contributors</h1>
+
+<ul>
+<li>David Liu</li>
+<li>Jaime Piña</li>
+<li>Josh Ellithorpe</li>
+<li>Kerim Oktay</li>
+<li>Lirui Li</li>
+<li>Preet Bhinder</li>
+<li>Ryan Boehning</li>
+</ul>
 
       <footer class="site-footer">
         <span class="site-footer-owner"><a href="https://github.com/apcera/libretto">Libretto</a> is maintained by <a href="https://github.com/apcera">apcera</a>.</span>

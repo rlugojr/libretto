@@ -212,16 +212,15 @@ func (vm *VM) GetIPs() ([]net.IP, error) {
 
 // GetSSH returns an ssh client for the the vm.
 func (vm *VM) GetSSH(options libssh.Options) (libssh.Client, error) {
-	ips, err := vm.GetIPs()
-	if err != nil {
-		return nil, fmt.Errorf("Error getting IPs for the VM: %s", err)
+	ips := options.IPs
+	if len(ips) == 0 {
+		ips, _ = vm.GetIPs()
 	}
 	if len(ips) == 0 {
-		return &libssh.SSHClient{}, lvm.ErrVMNoIP
+		return nil, lvm.ErrVMNoIP
 	}
 
 	client := libssh.SSHClient{Creds: &vm.Credentials, IP: ips[0], Port: 22, Options: options}
-
 	return &client, nil
 }
 

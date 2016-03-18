@@ -246,24 +246,25 @@ func (vm *VM) Destroy() error {
 
 // GetSSH returns an SSH client that can be used to connect to a VM. An error
 // is returned if the VM has no IPs.
-func (vm *VM) GetSSH(opts ssh.Options) (ssh.Client, error) {
-	ips, err := vm.GetIPs()
-	if ips == nil || len(ips) < 1 || err != nil {
+func (vm *VM) GetSSH(options ssh.Options) (ssh.Client, error) {
+	ips := options.IPs
+	if len(ips) == 0 {
+		ips, _ = vm.GetIPs()
+	}
+	if len(ips) == 0 {
 		return nil, ErrNoIPs
 	}
 
-	cli := &ssh.SSHClient{
+	client := &ssh.SSHClient{
 		Creds:   &vm.SSHCreds,
 		IP:      ips[PublicIP],
-		Options: opts,
+		Options: options,
 		Port:    22,
 	}
-
-	if err := cli.WaitForSSH(SSHTimeout); err != nil {
+	if err := client.WaitForSSH(SSHTimeout); err != nil {
 		return nil, err
 	}
-
-	return cli, nil
+	return client, nil
 }
 
 // GetState returns the state of the VM, such as "running". An error is

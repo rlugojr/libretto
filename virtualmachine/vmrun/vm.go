@@ -88,17 +88,16 @@ func (vm *VM) GetName() string {
 // GetSSH returns an ssh client for the the vm.
 func (vm *VM) GetSSH(options libssh.Options) (libssh.Client, error) {
 	if len(vm.ips) == 0 {
-		ips, err := vm.GetIPs()
-		if err != nil {
-			return nil, fmt.Errorf("Error getting IPs for the VM: %s", err)
-		}
-		if len(ips) == 0 {
-			return nil, lvm.ErrVMNoIP
-		}
-		vm.ips = ips
+		vm.ips = options.IPs
 	}
-	client := libssh.SSHClient{Creds: &vm.Credentials, IP: vm.ips[0], Port: 22, Options: options}
+	if len(vm.ips) == 0 {
+		vm.ips, _ = vm.GetIPs()
+	}
+	if len(vm.ips) == 0 {
+		return nil, lvm.ErrVMNoIP
+	}
 
+	client := libssh.SSHClient{Creds: &vm.Credentials, IP: vm.ips[0], Port: 22, Options: options}
 	return &client, nil
 }
 

@@ -615,14 +615,15 @@ func (vm *VM) Resume() (err error) {
 }
 
 // GetSSH returns an ssh client configured for this VM.
-func (vm *VM) GetSSH(options ssh.Options) (c ssh.Client, err error) {
-	ips, err := vm.GetIPs()
-	if err != nil {
-		return nil, fmt.Errorf("Error getting IPs for the VM: %s", err)
+func (vm *VM) GetSSH(options ssh.Options) (ssh.Client, error) {
+	ips := options.IPs
+	if len(ips) == 0 {
+		ips, _ = vm.GetIPs()
 	}
 	if len(ips) == 0 {
 		return nil, lvm.ErrVMNoIP
 	}
+
 	client := ssh.SSHClient{Creds: &vm.Credentials, IP: ips[0], Port: 22, Options: options}
 	return &client, nil
 }

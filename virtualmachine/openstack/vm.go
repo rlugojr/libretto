@@ -382,11 +382,11 @@ func (vm *VM) Destroy() error {
 // GetSSH returns an SSH client that can be used to connect to a VM. An error is
 // returned if the VM has no IPs.
 func (vm *VM) GetSSH(options ssh.Options) (ssh.Client, error) {
-	ips, err := vm.GetIPs()
-	if err != nil {
-		return nil, fmt.Errorf("Error getting IPs for the VM: %s", err)
+	ips := options.IPs
+	if len(ips) == 0 {
+		ips, _ = vm.GetIPs()
 	}
-	if ips == nil || len(ips) < 1 {
+	if len(ips) == 0 {
 		return nil, lvm.ErrVMNoIP
 	}
 

@@ -176,23 +176,22 @@ func (vm *VM) GetIPs() ([]net.IP, error) {
 
 // GetSSH returns an SSH client that can be used to connect to the VM. An error
 // is returned if the VM has no IPs.
-func (vm *VM) GetSSH(opts ssh.Options) (ssh.Client, error) {
-	ips, err := vm.GetIPs()
-	if err != nil {
-		return nil, fmt.Errorf("Failed to get ips: %s", err)
+func (vm *VM) GetSSH(options ssh.Options) (ssh.Client, error) {
+	ips := options.IPs
+	if len(ips) == 0 {
+		ips, _ = vm.GetIPs()
 	}
-	if ips == nil || len(ips) < 1 {
+	if len(ips) == 0 {
 		return nil, lvm.ErrVMNoIP
 	}
 
-	cli := ssh.SSHClient{
+	client := ssh.SSHClient{
 		Creds:   &vm.SSHCreds,
 		IP:      ips[PublicIP],
-		Options: opts,
+		Options: options,
 		Port:    22,
 	}
-
-	return &cli, nil
+	return &client, nil
 }
 
 // GetState returns the status of the Azure VM. The status will be one of the

@@ -76,6 +76,7 @@ type Credentials struct {
 
 // Options provides SSH options like KeepAlive.
 type Options struct {
+	IPs       []net.IP
 	KeepAlive int
 }
 

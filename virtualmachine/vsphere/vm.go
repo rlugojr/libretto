@@ -336,6 +336,8 @@ type VM struct {
 	Credentials ssh.Credentials
 	// Disks is a slice of extra disks to attach to the VM
 	Disks []Disk
+	// Snapshot is the name of a VM to be used as the source of a linked clone. 
+	Snapshot string
 	// QuestionResponses is a map of regular expressions to match question text
 	// to responses when a VM encounters a questions which would otherwise
 	// prevent normal operation. The response strings should be the string value

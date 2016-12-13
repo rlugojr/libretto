@@ -1,0 +1,16 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	0	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+Client	/Users/sean/Code/go/src/github.com/apcera/libretto/vendor/github.com/vmware/govmomi/client.go	/^type Client struct {$/;"	type	line:71
+NewClient	/Users/sean/Code/go/src/github.com/apcera/libretto/vendor/github.com/vmware/govmomi/client.go	/^func NewClient(ctx context.Context, u *url.URL, insecure bool) (*Client, error) {$/;"	func	line:79
+NewClientWithCertificate	/Users/sean/Code/go/src/github.com/apcera/libretto/vendor/github.com/vmware/govmomi/client.go	/^func NewClientWithCertificate(ctx context.Context, u *url.URL, insecure bool, cert tls.Certificate) (*Client, error) {$/;"	func	line:104
+Login	/Users/sean/Code/go/src/github.com/apcera/libretto/vendor/github.com/vmware/govmomi/client.go	/^func (c *Client) Login(ctx context.Context, u *url.Userinfo) error {$/;"	func	line:128
+LoginExtensionByCertificate	/Users/sean/Code/go/src/github.com/apcera/libretto/vendor/github.com/vmware/govmomi/client.go	/^func (c *Client) LoginExtensionByCertificate(ctx context.Context, key string, locale string) error {$/;"	func	line:133
+Logout	/Users/sean/Code/go/src/github.com/apcera/libretto/vendor/github.com/vmware/govmomi/client.go	/^func (c *Client) Logout(ctx context.Context) error {$/;"	func	line:138
+PropertyCollector	/Users/sean/Code/go/src/github.com/apcera/libretto/vendor/github.com/vmware/govmomi/client.go	/^func (c *Client) PropertyCollector() *property.Collector {$/;"	func	line:145
+RetrieveOne	/Users/sean/Code/go/src/github.com/apcera/libretto/vendor/github.com/vmware/govmomi/client.go	/^func (c *Client) RetrieveOne(ctx context.Context, obj types.ManagedObjectReference, p []string, dst interface{}) error {$/;"	func	line:150
+Retrieve	/Users/sean/Code/go/src/github.com/apcera/libretto/vendor/github.com/vmware/govmomi/client.go	/^func (c *Client) Retrieve(ctx context.Context, objs []types.ManagedObjectReference, p []string, dst interface{}) error {$/;"	func	line:155
+Wait	/Users/sean/Code/go/src/github.com/apcera/libretto/vendor/github.com/vmware/govmomi/client.go	/^func (c *Client) Wait(ctx context.Context, obj types.ManagedObjectReference, ps []string, f func([]types.PropertyChange) bool) error {$/;"	func	line:160

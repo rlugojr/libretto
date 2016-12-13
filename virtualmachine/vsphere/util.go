@@ -319,7 +319,7 @@ func searchTree(vm *VM, mor types.ManagedObjectReference, name string) (*mo.Virt
 		vmMo := mo.VirtualMachine{}
 		err := vm.collector.RetrieveOne(vm.ctx, mor, []string{"name", "guest.ipAddress", "guest.guestState", "guest.net", "runtime.question", "snapshot.currentsnapshot"}, &vmMo)
 		if err != nil {
-			return nil, NewErrorObjectNotFound(errors.New("could not find the vm"), name)
+			return nil, NewErrorObjectNotFound(errors.New("could not find the vm with RetrieveOne"), name)
 		}
 		if vmMo.Name == name {
 			return &vmMo, nil

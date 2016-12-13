@@ -262,6 +262,13 @@ type Disk struct {
 	Controller string
 }
 
+type Snapshot struct {
+	Name string
+	Description string
+	Memory bool
+	Quiesce bool
+}
+
 type finder interface {
 	DatacenterList(context.Context, string) ([]*object.Datacenter, error)
 }
@@ -336,8 +343,8 @@ type VM struct {
 	Credentials ssh.Credentials
 	// Disks is a slice of extra disks to attach to the VM
 	Disks []Disk
-	// Snapshot is the name of a VM to be used as the source of a linked clone. 
-	Snapshot string
+	// Snapshot is mapping of Snapshot options.
+	Snapshot Snapshot
 	// QuestionResponses is a map of regular expressions to match question text
 	// to responses when a VM encounters a questions which would otherwise
 	// prevent normal operation. The response strings should be the string value
@@ -415,6 +422,38 @@ func (vm *VM) Provision() (err error) {
 		return fmt.Errorf("error while cloning vm from template: %s", err)
 	}
 	return
+}
+
+// CreateSnapshot creates a snapshot of the current VM.
+func (vm *VM) CreateSnapshot() (err error) {
+	if err := SetupSession(vm); err != nil {
+		return fmt.Errorf("Error setting up vSphere session: %s", err)
+	}
+	// Close the session when done.
+	defer vm.cancel()
+
+	dcMo, err := GetDatacenter(vm)
+	if err != nil {
+		return err
+	}
+
+	vmMo, err := findVM(vm, dcMo, vm.Name)
+	if err != nil {
+		return err
+	}
+	vmo := object.NewVirtualMachine(vm.client.Client, vmMo.Reference())
+	snapshotTask, err := vmo.CreateSnapshot(vm.ctx, vm.Snapshot.Name, vm.Snapshot.Description, vm.Snapshot.Memory, vm.Snapshot.Quiesce)
+	if err != nil {
+		return fmt.Errorf("error creating snapshot of the vm: %s", err)
+	}
+	tInfo, err := snapshotTask.WaitForResult(vm.ctx, nil)
+	if err != nil {
+		return fmt.Errorf("error waiting for snapshot to finish: %s", err)
+	}
+	if tInfo.Error != nil {
+		return fmt.Errorf("snapshot task returned an error: %s", err)
+	}
+	return nil
 }
 
 // GetName returns the name of this VM.

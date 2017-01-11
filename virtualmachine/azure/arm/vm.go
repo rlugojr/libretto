@@ -202,11 +202,16 @@ func (vm *VM) GetState() (string, error) {
 	virtualMachinesClient.Authorizer = authorizer
 
 	r, e := virtualMachinesClient.Get(vm.ResourceGroup, vm.Name, "InstanceView")
-	if r.Properties != nil && r.Properties.InstanceView != nil && len(*r.Properties.InstanceView.Statuses) > 0 {
-		state := *(*r.Properties.InstanceView.Statuses)[1].DisplayStatus
-		return translateState(state), e
+	if e != nil {
+		return e
 	}
-	return "", e
+
+	if r.Properties != nil && r.Properties.InstanceView != nil && len(*r.Properties.InstanceView.Statuses) > 1 {
+		state := *(*r.Properties.InstanceView.Statuses)[1].DisplayStatus
+		return translateState(state), nil
+	}
+
+	return "", fmt.Errorf("failed to get state from the vm")
 }
 
 // Destroy deletes the VM on Azure.

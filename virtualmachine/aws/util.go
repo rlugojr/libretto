@@ -211,6 +211,10 @@ func instanceInfo(vm *VM) *ec2.RunInstancesInput {
 			},
 		})
 	}
+	var privateIPAddress *string
+	if vm.PrivateIPAddress != "" {
+		privateIPAddress = aws.String(vm.PrivateIPAddress)
+	}
 
 	return &ec2.RunInstancesInput{
 		ImageId:             aws.String(vm.AMI),
@@ -225,6 +229,7 @@ func instanceInfo(vm *VM) *ec2.RunInstancesInput {
 		SubnetId:           sid,
 		SecurityGroupIds:   sgid,
 		IamInstanceProfile: iamInstance,
+		PrivateIpAddress:   privateIPAddress,
 	}
 }
 

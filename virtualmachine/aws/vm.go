@@ -76,6 +76,7 @@ type VM struct {
 	InstanceID             string
 	KeyPair                string // required
 	IamInstanceProfileName string
+	PrivateIPAddress       string
 
 	Volumes                      []EBSVolume
 	KeepRootVolumeOnDestroy      bool

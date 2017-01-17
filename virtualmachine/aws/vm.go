@@ -177,6 +177,12 @@ func (vm *VM) Provision() error {
 		return setNonRootDeleteOnDestroy(svc, vm.InstanceID, true)
 	}
 
+	if vm.Name != "" {
+		if err := vm.SetTag("Name", vm.GetName()); err != nil {
+			return err
+		}
+	}
+
 	return nil
 }
 

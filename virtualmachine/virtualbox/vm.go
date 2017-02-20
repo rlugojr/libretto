@@ -40,7 +40,6 @@ type NIC struct {
 	Idx           int
 	Backing       Backing
 	BackingDevice string
-	runner        Runner
 }
 
 // Runner is an encapsulation around the vmrun utility.

@@ -330,7 +330,7 @@
 			"importpath": "golang.org/x/oauth2",
 			"repository": "https://go.googlesource.com/oauth2",
 			"vcs": "git",
-			"revision": "f6093e37b6cb4092101a298aba5d794eb570757f",
+			"revision": "b9780ec78894ab900c062d58ee3076cd9b2a4501",
 			"branch": "master",
 			"notests": true
 		},

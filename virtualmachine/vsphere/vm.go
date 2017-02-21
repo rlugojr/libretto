@@ -19,7 +19,6 @@ import (
 	"github.com/vmware/govmomi"
 	"github.com/vmware/govmomi/find"
 	"github.com/vmware/govmomi/object"
-	"github.com/vmware/govmomi/property"
 	"github.com/vmware/govmomi/vim25/types"
 
 	"golang.org/x/net/context"
@@ -272,14 +271,6 @@ type snapshot struct {
 
 type finder interface {
 	DatacenterList(context.Context, string) ([]*object.Datacenter, error)
-}
-
-type vmwareCollector struct {
-	collector *property.Collector
-}
-
-func (v vmwareCollector) RetrieveOne(c context.Context, mor types.ManagedObjectReference, ps []string, dst interface{}) error {
-	return v.collector.RetrieveOne(c, mor, ps, dst)
 }
 
 type location struct {

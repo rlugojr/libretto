@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"net"
+	"sync"
 	"time"
 
 	"github.com/apcera/libretto/ssh"
@@ -40,6 +41,11 @@ var (
 	// This ensures that aws.VM implements the virtualmachine.VirtualMachine
 	// interface at compile time.
 	_ virtualmachine.VirtualMachine = (*VM)(nil)
+
+	// nextProvision is the wall time when the next call to Provision will be
+	// allowed to proceed. This is part of the rate limiting system.
+	nextProvision time.Time
+	mu            sync.Mutex
 )
 
 var (
@@ -150,6 +156,8 @@ func (vm *VM) SetTags(tags map[string]string) error {
 // there was a problem during creation, if there was a problem adding a tag, or
 // if the VM takes too long to enter "running" state.
 func (vm *VM) Provision() error {
+	wait() // Avoid the AWS rate limit.
+
 	svc, err := getService(vm.Region)
 	if err != nil {
 		return fmt.Errorf("failed to get AWS service: %v", err)
@@ -181,6 +189,46 @@ func (vm *VM) Provision() error {
 	}
 
 	return nil
+}
+
+// wait implements a rate limiter that prevents more than one call every
+// 0.5s. The maximum time that the caller can be delayed is 1m.
+func wait() {
+	now := time.Now().UTC()
+	wait := getWaitTime(now)
+
+	// If the wait time is negative, Sleep will return immediately.
+	time.Sleep(wait)
+}
+
+// getWaitTime computes the duration to sleep before the caller of wait() is
+// allowed to proceed. Every concurrent call adds 0.5s to the time the
+// subsequent caller must wait, up to a maximum of 1 minute.
+func getWaitTime(now time.Time) time.Duration {
+	const (
+		interval = 500 * time.Millisecond
+		maxWait  = 1 * time.Minute
+	)
+
+	mu.Lock()
+	defer mu.Unlock()
+
+	wait := nextProvision.Sub(now) // might be negative
+
+	// When the system clock falls back an hour, the wait time might be an hour.
+	// This sanity check prevents this error.
+	if wait > maxWait {
+		nextProvision = now.Add(maxWait)
+		return maxWait
+	}
+
+	if now.After(nextProvision) {
+		nextProvision = now.Add(interval)
+		return wait
+	}
+
+	nextProvision.Add(interval)
+	return wait
 }
 
 // GetIPs returns a slice of IP addresses assigned to the VM. The PublicIP or
